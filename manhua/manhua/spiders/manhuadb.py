@@ -1,5 +1,6 @@
-from manhua.items import *
 import scrapy
+
+from manhua.items import *
 
 
 class ManhuaDBSpider(scrapy.Spider):
@@ -39,4 +40,5 @@ class ManhuaDBSpider(scrapy.Spider):
         #     yield request
 
     def parse_vol(self, response: scrapy.http.Response):
+        vol = VolItem()
         pass
