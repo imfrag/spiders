@@ -8,7 +8,20 @@
 import scrapy
 
 
+class VolItem(scrapy.Item):
+    comic_id = scrapy.Field()
+    id = scrapy.Field()
+    images = scrapy.Field()
+
+
 class ManhuaItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    id = scrapy.Field()
+    url = scrapy.Field()
+    thumbnail = scrapy.Field()
+    title = scrapy.Field()
+    original_title = scrapy.Field()
+    author = scrapy.Field()
+    summary = scrapy.Field()
+    state = scrapy.Field()
+    duration = scrapy.Field()
+    vols = scrapy.Field()
