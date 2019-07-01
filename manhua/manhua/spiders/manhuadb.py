@@ -1,5 +1,3 @@
-import scrapy
-
 from manhua.items import *
 
 
@@ -16,7 +14,7 @@ class ManhuaDBSpider(scrapy.Spider):
 
     def parse(self, response: scrapy.http.Response):
         comic = ManhuaItem()
-        comic['id'] = response.url.split('/')[-1]
+        comic['comic_id'] = response.url.split('/')[-1]
         comic['url'] = response.urljoin(response.url)
         comic['thumbnail'] = response.urljoin(response.css('div.cover img::attr(src)').get())
         comic['title'] = response.css('td.comic-titles::text').get()
@@ -32,13 +30,35 @@ class ManhuaDBSpider(scrapy.Spider):
         for i, url in enumerate(vol_urls, start=1):
             comic['vols']['vol-%s' % i] = response.urljoin(url)
             request = scrapy.Request(response.urljoin(url), callback=self.parse_vol)
-            request.meta['comic_id'] = comic['id']
+            request.meta['comic_id'] = comic['comic_id']
+            request.meta['id'] = 'vol-%s' % i
             res.append(request)
         yield comic
 
-        # for request in res:
-        #     yield request
+        for request in res:
+            yield request
 
     def parse_vol(self, response: scrapy.http.Response):
         vol = VolItem()
-        pass
+        vol['vol_id'] = response.meta['id']
+        vol['comic_id'] = response.meta['comic_id']
+        vol['images'] = response.css('select#page-selector')[0].css('option::attr(value)').getall()
+        vol['images'] = [response.urljoin(url) for url in vol['images']]
+        yield vol
+
+        for i, url in enumerate(vol['images'], start=1):
+            request = scrapy.Request(url, callback=self.parse_page)
+            request.meta['comic_id'] = vol['comic_id']
+            request.meta['vol_id'] = vol['vol_id']
+            request.meta['page'] = i
+            yield request
+
+    def parse_page(self, response: scrapy.http.Response):
+        image_url = response.css('div#all div.text-center img.img-fluid::attr(src)').get()
+        image_url = response.urljoin(image_url)
+        image = ImageItem()
+        image['comic_id'] = response.meta['comic_id']
+        image['vol_id'] = response.meta['vol_id']
+        image['page'] = response.meta['page']
+        image['url'] = image_url
+        yield image

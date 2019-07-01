@@ -8,14 +8,21 @@
 import scrapy
 
 
+class ImageItem(scrapy.Item):
+    comic_id = scrapy.Field()
+    vol_id = scrapy.Field()
+    page = scrapy.Field()
+    url = scrapy.Field()
+
+
 class VolItem(scrapy.Item):
     comic_id = scrapy.Field()
-    id = scrapy.Field()
+    vol_id = scrapy.Field()
     images = scrapy.Field()
 
 
 class ManhuaItem(scrapy.Item):
-    id = scrapy.Field()
+    comic_id = scrapy.Field()
     url = scrapy.Field()
     thumbnail = scrapy.Field()
     title = scrapy.Field()
