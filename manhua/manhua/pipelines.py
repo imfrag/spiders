@@ -24,16 +24,17 @@ class ManhuaPipeline(object):
         comic_path = os.path.join(path, item.get('comic_id'))
         if not os.path.exists(comic_path):
             os.mkdir(comic_path)
-        vol_path = os.path.join(comic_path, item.get('vol_id'))
-        if not os.path.exists(vol_path):
-            os.mkdir(vol_path)
+
+        if item.get('vol_id', ''):
+            vol_path = os.path.join(comic_path, item.get('vol_id'))
+            if not os.path.exists(vol_path):
+                os.mkdir(vol_path)
 
         if isinstance(item, ManhuaItem):
             thumbnail_path = os.path.join(comic_path,
                                           'thumbnail.%s' % item['thumbnail'].split('.')[-1])
-            if not os.path.exists(thumbnail_path):
-                with open(thumbnail_path, 'wb') as f:
-                    f.write(requests.get(item['thumbnail']).content)
+            with open(thumbnail_path, 'wb') as f:
+                f.write(requests.get(item['thumbnail']).content)
 
             with open(os.path.join(comic_path, '%s.inf' % item['comic_id']), 'wb') as f:
                 info = ('Title: %s\n'
@@ -43,12 +44,12 @@ class ManhuaPipeline(object):
                         'Duration: %s\n'
                         'Summary: %s\n'
                         'Comic URL: %s\n' % (item['title'],
-                                       item['original_title'],
-                                       item['author'],
-                                       item['state'],
-                                       item['duration'],
-                                       item['summary'],
-                                       item['url'])).encode('utf-8')
+                                             item['original_title'],
+                                             item['author'],
+                                             item['state'],
+                                             item['duration'],
+                                             item['summary'],
+                                             item['url'])).encode('utf-8')
                 f.write(info)
                 for i, url in item['vols'].items():
                     f.write(('%s:\t%s\n' % (i, url)).encode('utf-8'))
