@@ -6,11 +6,10 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+import requests
 import time
 
-import requests
-
-from manhua.items import *
+from manhua.manhua.items import *
 
 
 class ManhuaPipeline(object):

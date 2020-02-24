@@ -1,4 +1,5 @@
-from manhua.items import *
+from manhua.manhua.items import *
+import scrapy
 
 
 class ManhuaDBSpider(scrapy.Spider):
